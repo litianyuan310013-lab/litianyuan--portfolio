@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>李天元 - 颗粒与硅基 (Grain & Silicon)</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入自定义字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- 引入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入 StPageFlip -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#1A1A1A',
+                        paper: '#F5F5F0',
+                        accent: '#E63946'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark text-paper overflow-x-hidden antialiased selection:bg-paper selection:text-dark">
+    <!-- 初始背景音乐控制弹窗 -->
+    <div id="bgm-prompt-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm transition-opacity duration-500">
+        <div class="bg-paper/10 border border-paper/20 p-8 rounded-lg max-w-sm w-[90vw] text-center shadow-2xl">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-paper/5 flex items-center justify-center">
+                <svg class="w-8 h-8 text-paper/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+            </div>
+            <h3 class="font-serif text-xl font-bold mb-2">是否播放背景音乐？</h3>
+            <p class="font-mono text-sm text-paper/60 mb-8">开启音乐，获得更沉浸的浏览体验<br><span class="text-xs">🎵 Ryuichi Sakamoto - <i>andata</i></span></p>
+            <div class="flex gap-4 justify-center font-mono">
+                <button id="btn-play-bgm" class="px-6 py-2 bg-paper text-dark font-bold rounded hover:bg-white transition-colors">播放</button>
+                <button id="btn-mute-bgm" class="px-6 py-2 border border-paper/30 text-paper/80 rounded hover:bg-paper/10 transition-colors">不播放</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div id="film-grain" class="pointer-events-none fixed inset-0 z-50 opacity-[0.05] mix-blend-overlay"></div>
+    
+    <!-- 柯达 Portra 400 滤镜效果 -->
+    <div id="kodak-filter" class="pointer-events-none fixed inset-0 z-40 mix-blend-color backdrop-filter backdrop-contrast-110 backdrop-brightness-105 backdrop-saturate-[1.15]"></div>
+    
+    <!-- 背景视频 -->
+    <div class="fixed inset-0 z-0 opacity-20">
+        <video id="bg-video" autoplay loop muted playsinline preload="auto" class="w-full h-full object-cover blur-sm">
+            <source src="assets/main-bg-video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <main class="relative z-10 w-full max-w-7xl mx-auto px-6 py-24 md:py-32 flex flex-col gap-32">
+        
+        <!-- Section 1: 个人介绍 (Bio) -->
+        <section id="bio" class="flex flex-col md:flex-row items-center justify-between gap-12 cinematic-fade-in">
+            <div class="md:w-1/2 space-y-6">
+                <h1 class="font-serif text-5xl md:text-7xl font-bold tracking-tighter hover-flicker">
+                    李天元
+                </h1>
+                <p class="font-mono text-xl md:text-2xl text-paper/80">
+                    <span class="inline-block border border-paper/30 px-3 py-1 rounded-full text-sm mb-4">00后内容创作者</span><br/>
+                    创意脑洞 + 高效执行 + 情感洞察
+                </p>
+                <div class="font-mono text-sm text-paper/60 space-y-2 border-l-2 border-paper/30 pl-4">
+                    <p>> 抽象挖掘机</p>
+                    <p>> 胶片摄影爱好者</p>
+                    <p>> 胡同漫游探索者</p>
+                    <p>> 中羽 1.5 级球员</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                    <div class="flex flex-col gap-4">
+                        <h3 class="font-serif text-lg font-bold text-paper/80 border-b border-paper/20 pb-1 w-max">主要工作产出</h3>
+                        <div class="flex gap-4">
+                            <div class="stat-card">
+                                <div class="font-serif text-3xl font-bold text-white">1500w+</div>
+                                <div class="font-mono text-xs text-paper/60">全网总播放量</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="font-serif text-3xl font-bold text-white">10w+</div>
+                                <div class="font-mono text-xs text-paper/60">视频号爆款</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="md:w-1/2 relative collage-container group">
+                <!-- 图片拼贴 -->
+                <img src="assets/IMG_0227.jpeg" loading="eager" decoding="sync" alt="Portrait" class="w-64 h-80 object-cover rounded-sm shadow-2xl absolute top-0 right-10 rotate-3 group-hover:rotate-6 transition-transform duration-500 z-20 grayscale hover:grayscale-0">
+                <img src="assets/R0007552 2.jpeg" loading="eager" decoding="sync" alt="Vibe" class="w-56 h-72 object-cover rounded-sm shadow-xl absolute top-10 right-40 -rotate-6 group-hover:-rotate-3 transition-transform duration-500 z-10 opacity-80">
+            </div>
+        </section>
+
+        <!-- Section 2: 工作经历 (Experience) -->
+        <section id="experience" class="space-y-8 cinematic-fade-in relative z-10">
+            <h2 class="font-serif text-4xl font-bold border-b border-paper/20 pb-4">>> 工作经历 / Experience</h2>
+            <div class="border border-paper/10 p-8 hover:bg-paper/5 transition-colors relative">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h3 class="font-serif text-3xl font-bold mb-2">滴滴出行</h3>
+                        <p class="font-mono text-sm text-paper/60">公众沟通部 | 新媒体运营</p>
+                    </div>
+                    <div class="text-paper/50 font-mono text-sm mt-2 md:mt-0">2024.7 - 至今 | 北京</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-mono text-sm text-paper/80">
+                    <div class="space-y-2">
+                        <strong class="text-accent block mb-1">视频编导：</strong>
+                        <p class="leading-relaxed">结合业务方向及受众特点，融入当下节气、热点话题等开展视频内容创意工作，完成系列视频的制作，所策划的“滴字经”、“很新的爬山方式”等00后系列内容在视频号上数据均实现10w+。</p>
+                    </div>
+                    <div class="space-y-2">
+                        <strong class="text-accent block mb-1">小红书内容制作：</strong>
+                        <p class="leading-relaxed">调研小红书平台的用户特点、互动方式及内容玩法，结合内容策略制作符合滴滴小红书官方账号及平台调性的内容，产出的内容带动涨粉2000+、互动量1w+，并着重体现官号的“活人感”调性。</p>
+                    </div>
+                    <div class="space-y-2">
+                        <strong class="text-accent block mb-1">用户策略运营：</strong>
+                        <p class="leading-relaxed">针对司机群体，负责“开始接单啦”视频号、抖音号的内容策划，解决具体业务难题，实现司乘友好互动提升，规避舆论影响，促进新功能上线快速推广等。独立完成拍摄、剪辑，把控视频展示风格及内容输出质量，收集评论区反馈，迭代选题方向更新选题库。爆款视频：女儿的信是她接的第一单（2w+）、女司机有话说（1w+）、司机新年家宴（1w+）。</p>
+                    </div>
+                    <div class="space-y-2">
+                        <strong class="text-accent block mb-1">活动运营：</strong>
+                        <p class="leading-relaxed">根据传播策略，统筹活动策划及落地、达人对接、素材内容拍摄及制作等工作，促进品牌的正向宣传。结合项目要求，协调三方达人、媒体渠道等资源。其中2024年潍坊风筝节三方传播总播放量1472w+，累计点赞12w+。以“会飞的小猪”风筝为载体，实现品牌年轻化传播，低成本高曝光，提升品牌认知度。</p>
+                        
+                        <br>
+                        <strong class="text-accent block mb-1">直播运营：</strong>
+                        <p class="leading-relaxed">从流程总控、内容策划、直播话术等跨部门沟通协调，独立完成直播的全链路管理。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2.5: 实习经历 (Internship) -->
+        <section id="internship" class="space-y-8 cinematic-fade-in relative z-10">
+            <h2 class="font-serif text-4xl font-bold border-b border-paper/20 pb-4">>> 实习经历 / Internship</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="experience-card border border-paper/10 p-6 hover:bg-paper/5 transition-colors relative">
+                    <div class="text-paper/50 font-mono text-xs mb-2">2024.1 - 2024.5</div>
+                    <h3 class="font-serif text-xl font-bold mb-1">滴滴出行</h3>
+                    <p class="font-mono text-sm text-accent mb-4">新媒体运营</p>
+                    <p class="font-mono text-sm text-paper/80 leading-relaxed">
+                        滴滴出行官方视频号“00后”系列视频策划、热点捕捉与自家产品结合，在潍坊风筝节策划“花小猪”风筝制作视频。
+                    </p>
+                </div>
+                <div class="experience-card border border-paper/10 p-6 hover:bg-paper/5 transition-colors relative">
+                    <div class="text-paper/50 font-mono text-xs mb-2">2023.8 - 2023.12</div>
+                    <h3 class="font-serif text-xl font-bold mb-1">网易传媒科技(北京)有限公司</h3>
+                    <p class="font-mono text-sm text-accent mb-4">视频制作</p>
+                    <p class="font-mono text-sm text-paper/80 leading-relaxed">
+                        视频脚本、拍摄、口播、剪辑及播后数据分析、维护等工作。擅长数码类产品测评、热点数码产品预测的视频输出。
+                    </p>
+                </div>
+                <div class="experience-card border border-paper/10 p-6 hover:bg-paper/5 transition-colors relative">
+                    <div class="text-paper/50 font-mono text-xs mb-2">2022.1 - 2022.3</div>
+                    <h3 class="font-serif text-xl font-bold mb-1">央视国际网络有限公司</h3>
+                    <p class="font-mono text-sm text-accent mb-4">内容运营</p>
+                    <p class="font-mono text-sm text-paper/80 leading-relaxed">
+                        筛选、编辑时事体育热点新闻，严选高价值新闻、第一时间按照平台要求规范发布。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 视频产出 (Video Portfolio) 横向胶卷式 -->
+        <section id="video-portfolio" class="space-y-8 relative z-10 py-12">
+            <h2 class="font-serif text-4xl font-bold border-b border-paper/20 pb-4">>> 内容产出 / Content Works</h2>
+            <div class="relative w-full film-roll-container mt-12 is-opened">
+                
+                <!-- 胶片灼烧转场特效遮罩 -->
+                <div class="absolute inset-0 z-40 pointer-events-none mix-blend-screen opacity-0 transition-opacity duration-300 bg-black" id="burn-overlay">
+                    <video id="burn-vid" class="w-full h-full object-cover brightness-50 opacity-80" muted playsinline>
+                        <source src="" type="video/mp4">
+                    </video>
+                </div>
+
+                <div class="film-strip-wrapper">
+                    <div class="film-strip-horizontal flex overflow-x-auto gap-8 pb-8 snap-x snap-mandatory hide-scrollbar pl-12 md:pl-20">
+                        
+                        <!-- 爆款视频 -->
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/060f827c3k09bc0b156a03b980724dec.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="脚不沾地爬山">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <!-- 播放按钮遮罩 -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-accent font-mono text-xs mb-1">01 爆款视频</div>
+                                <h3 class="font-serif text-xl font-bold">脚不沾地爬山</h3>
+                            </div>
+                            <p class="font-mono text-xs text-paper/60">176w 播放</p>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/1b42228bdg6f5f403f20d529da4f7238.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="妇女节节点策划">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-accent font-mono text-xs mb-1">01 爆款视频</div>
+                                <h3 class="font-serif text-xl font-bold">妇女节完成女司机心愿</h3>
+                            </div>
+                            <p class="font-mono text-xs text-paper/60">235w 播放 | 19.7w 点赞</p>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/374243255u67f1db5ac135246a6fe362.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="花式写汉字">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-accent font-mono text-xs mb-1">01 爆款视频</div>
+                                <h3 class="font-serif text-xl font-bold">花式写汉字</h3>
+                            </div>
+                            <p class="font-mono text-xs text-paper/60">114w 播放</p>
+                        </div>
+                    </div>
+
+                    <!-- AI相关 -->
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/4afc0ba80o1e5743894d6378d04e7daa.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="传统节气+AI制作">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-blue-500 font-mono text-xs mb-1">02 AI相关</div>
+                                <h3 class="font-serif text-xl font-bold">传统节气+AI制作</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <img src="assets/1865.JPG" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 preview-img" alt="您知道您是AI吗">
+                            <!-- 隐藏的视频元素，点击后显示并播放 -->
+                            <video class="absolute inset-0 w-full h-full object-cover hidden real-video" preload="none" controls>
+                                <source src="assets/1944.MP4" type="video/mp4">
+                                您的浏览器不支持视频标签。
+                            </video>
+                            
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-blue-500 font-mono text-xs mb-1">02 AI相关</div>
+                                <h3 class="font-serif text-xl font-bold">您知道您是AI吗</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/4c8d1a8c5s9f6f0b0342ddec60ac358d.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="结合Sora2模型发布热点">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-blue-500 font-mono text-xs mb-1">02 AI相关</div>
+                                <h3 class="font-serif text-xl font-bold">结合Sora2模型发布热点</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 自主出镜 -->
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/55f005beaq931f94711e38210b80c624.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="插叙剪辑热点形式">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-yellow-500 font-mono text-xs mb-1">03 自主出镜</div>
+                                <h3 class="font-serif text-xl font-bold">插叙剪辑热点形式</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/5fd60ddb4reabe34a031fde3872eedb2.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="抽象演绎视频">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-yellow-500 font-mono text-xs mb-1">03 自主出镜</div>
+                                <h3 class="font-serif text-xl font-bold">抽象演绎视频</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/732c9e93bv760a2101fdc1db87152f79.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="大学生聊天记录形式">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-yellow-500 font-mono text-xs mb-1">03 自主出镜</div>
+                                <h3 class="font-serif text-xl font-bold">大学生聊天记录形式</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 线下项目 -->
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/90608daderd82a3008b83d3f8caf263f.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="小编带你探访">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">04 线下项目</div>
+                                <h3 class="font-serif text-xl font-bold">小编带你探访中秋司机家宴</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/b96119e59ke5e611048b4bb3fda3247c.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="全运会滴滴保障车队">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">04 线下项目</div>
+                                <h3 class="font-serif text-xl font-bold">全运会滴滴保障车队</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets">
+                            <img src="assets/e60246f63nca20c9950b6aa4f4b6e95d.jpeg" loading="eager" decoding="sync" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="顺风车专场活动">
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">04 线下项目</div>
+                                <h3 class="font-serif text-xl font-bold">顺风车专场活动</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 05 滴滴相关 -->
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/winter-didi-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">冬天就要暖暖的过</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/climbing-style-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">很新的爬山方式</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/01e867907a6665e00103700197d497ce33_115.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">滴滴相关视频</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/driver-moment-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">司机的暗爽瞬间</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/horse-stance-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">马步定桩抵消惯性</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/daughter-letter-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">接的第一单</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="film-frame-h snap-center shrink-0 w-[56vw] md:w-[42vw] max-w-xl cursor-pointer group" onclick="playVideo(this)">
+                        <div class="relative w-full aspect-[3/4] bg-paper/10 overflow-hidden film-sprockets video-container">
+                            <video class="real-video w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" muted loop playsinline preload="metadata">
+                                <source src="assets/ac-communication-new.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition-colors duration-500 play-overlay"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-overlay">
+                                <div class="w-16 h-16 rounded-full bg-paper/20 backdrop-blur-sm flex items-center justify-center border border-paper/50">
+                                    <div class="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end info-text">
+                            <div>
+                                <div class="text-green-500 font-mono text-xs mb-1">05 滴滴相关</div>
+                                <h3 class="font-serif text-xl font-bold truncate w-48">高温补贴</h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: AIGC 实验室 (AIGC Lab) -->
+        <section id="aigc-lab" class="space-y-6 cinematic-fade-in opacity-80 scale-95 origin-left">
+            <h2 class="font-serif text-2xl font-bold border-b border-paper/10 pb-2">>> AIGC 实验室 / The Lab</h2>
+            <p class="font-mono text-sm text-paper/50">探索生成式 AI 的前沿应用，实现创作的“降本增效”。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border border-paper/5 p-4 bg-dark/30 backdrop-blur-sm text-sm">
+                    <div class="font-serif text-lg font-bold mb-2 flex items-center gap-2 text-paper/80">
+                        <span class="w-2 h-2 rounded-full bg-accent opacity-50"></span>
+                        Kling
+                    </div>
+                    <p class="font-mono text-xs text-paper/50">高表现力视频生成，应用于概念演示与视觉扩充。</p>
+                </div>
+                <div class="border border-paper/5 p-4 bg-dark/30 backdrop-blur-sm text-sm">
+                    <div class="font-serif text-lg font-bold mb-2 flex items-center gap-2 text-paper/80">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 opacity-50"></span>
+                        Seedance
+                    </div>
+                    <p class="font-mono text-xs text-paper/50">动态视觉节奏生成，提升视频卡点与音乐契合度。</p>
+                </div>
+                <div class="border border-paper/5 p-4 bg-dark/30 backdrop-blur-sm text-sm">
+                    <div class="font-serif text-lg font-bold mb-2 flex items-center gap-2 text-paper/80">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500 opacity-50"></span>
+                        Nano-Banana
+                    </div>
+                    <p class="font-mono text-xs text-paper/50">创意素材快速生成与迭代，打破灵感瓶颈。</p>
+                </div>
+            </div>
+        </section>
+
+                <!-- Section 5: 个人胶片作品展示 (Photo Wall) -->
+        <section id="photo-wall" class="space-y-8 relative z-10 py-12 flex flex-col items-center">
+            <h2 class="font-serif text-4xl font-bold border-b border-paper/20 pb-4 w-full">>> 生活照片/胶片作品 / Photography</h2>
+            <p class="font-mono text-sm text-paper/50 pb-4">（支持鼠标拖拽或点击左右两侧翻页）</p>
+            
+            <div class="book-wrapper w-full max-w-5xl mx-auto flex justify-center perspective-1000 cinematic-fade-in" id="book-wrapper">
+                <div id="flipbook" class="shadow-2xl">
+                    <!-- 封面 -->
+                    <div id="photobook-cover" class="page hard cover-front relative cursor-pointer flex flex-col items-center justify-center p-8" style="background-color: #f4f1ea;">
+                        <p class="font-serif text-3xl md:text-5xl text-[#2a2a2a] font-bold mb-6 text-center tracking-wider" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1); letter-spacing: 0.15em;">生活照片/胶片作品</p>
+                        <div class="w-24 h-[2px] bg-dark/40 mb-6"></div>
+                        <p class="font-serif text-xl md:text-2xl text-dark/80 tracking-widest text-center" style="letter-spacing: 0.2em;">Photography</p>
+                        <p class="font-mono text-dark/50 text-xs mt-16 text-center tracking-wider">Litianyuan's Collection</p>
+                    </div>
+                    <div class="page hard" style="background-color: #f4f1ea;"></div>
+
+
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/019bb0494vbf0d872f837cfe263afe45.jpeg" loading="eager" decoding="sync" class="photo-layout-1" alt="Photo 1">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">1</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/129e02d75l5f63663d8952ad6ea5fd2f.jpeg" loading="eager" decoding="sync" class="photo-layout-2" alt="Photo 2">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">2</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/16093d408j3e2a554489aff225495a22.jpeg" loading="eager" decoding="sync" class="photo-layout-3" alt="Photo 3">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">3</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/1848c2a71s7f94aeb67bc5ded6ca0440.jpeg" loading="eager" decoding="sync" class="photo-layout-4" alt="Photo 4">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">4</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/2ae1ca883g8aa028acad1893c8bd488e.jpeg" loading="eager" decoding="sync" class="photo-layout-5" alt="Photo 5">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">5</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/325c20de5g116ce9e6e972774c0d2e4c.jpeg" loading="eager" decoding="sync" class="photo-layout-6" alt="Photo 6">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">6</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/336a905f9ga5954b9f9c0689024f28f5.jpeg" loading="eager" decoding="sync" class="photo-layout-7" alt="Photo 7">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">7</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/3c706e7fetb8b31e8261f2067033550c.jpeg" loading="eager" decoding="sync" class="photo-layout-8" alt="Photo 8">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">8</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/4fc66cdc2o2bc601c5f89fe7c5ddafc3.jpeg" loading="eager" decoding="sync" class="photo-layout-9" alt="Photo 9">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">9</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/572c6f861v816b61a903e386520b4368.jpeg" loading="eager" decoding="sync" class="photo-layout-10" alt="Photo 10">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">10</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/698837d2aic5736d025e5569160b351c.jpeg" loading="eager" decoding="sync" class="photo-layout-11" alt="Photo 11">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">11</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/776cb9e94n926044e92559667afd410f.jpeg" loading="eager" decoding="sync" class="photo-layout-12" alt="Photo 12">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">12</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/85e9a2d7fsa061e00e9c980872cfb800.jpeg" loading="eager" decoding="sync" class="photo-layout-13" alt="Photo 13">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">13</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/8620a4edai9630035a0553b3f584762b.jpeg" loading="eager" decoding="sync" class="photo-layout-14" alt="Photo 14">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">14</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/a97f5fb16g1a6e7a73292c3bd0dce7ee.jpeg" loading="eager" decoding="sync" class="photo-layout-15" alt="Photo 15">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">15</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/e66f24b3eobebbf4441bf73f69086e0b.jpeg" loading="eager" decoding="sync" class="photo-layout-16" alt="Photo 16">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">16</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/f1c2ceb20t5d67fda639d531fdf67085.jpeg" loading="eager" decoding="sync" class="photo-layout-17" alt="Photo 17">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">17</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/060f827c3k09bc0b156a03b980724dec.jpeg" loading="eager" decoding="sync" class="photo-layout-18" alt="Photo 18">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">18</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/1b42228bdg6f5f403f20d529da4f7238.jpeg" loading="eager" decoding="sync" class="photo-layout-19" alt="Photo 19">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">19</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/374243255u67f1db5ac135246a6fe362.jpeg" loading="eager" decoding="sync" class="photo-layout-20" alt="Photo 20">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">20</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/4afc0ba80o1e5743894d6378d04e7daa.jpeg" loading="eager" decoding="sync" class="photo-layout-21" alt="Photo 21">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">21</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/4c8b4af35n562a60dd26fc2aa59f57e0.jpeg" loading="eager" decoding="sync" class="photo-layout-22" alt="Photo 22">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">22</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/4c8d1a8c5s9f6f0b0342ddec60ac358d.jpeg" loading="eager" decoding="sync" class="photo-layout-23" alt="Photo 23">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">23</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/55f005beaq931f94711e38210b80c624.jpeg" loading="eager" decoding="sync" class="photo-layout-24" alt="Photo 24">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">24</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/5fd60ddb4reabe34a031fde3872eedb2.jpeg" loading="eager" decoding="sync" class="photo-layout-25" alt="Photo 25">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">25</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/732c9e93bv760a2101fdc1db87152f79.jpeg" loading="eager" decoding="sync" class="photo-layout-26" alt="Photo 26">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">26</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/90608daderd82a3008b83d3f8caf263f.jpeg" loading="eager" decoding="sync" class="photo-layout-27" alt="Photo 27">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">27</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/b96119e59ke5e611048b4bb3fda3247c.jpeg" loading="eager" decoding="sync" class="photo-layout-28" alt="Photo 28">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">28</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;">
+                        <div class="page-asymmetric">
+                            <img src="assets/e60246f63nca20c9950b6aa4f4b6e95d.jpeg" loading="eager" decoding="sync" class="photo-layout-29" alt="Photo 29">
+                            <div class="absolute bottom-4 right-4 text-dark/30 font-serif text-xs">29</div>
+                        </div>
+                    </div>
+                    <div class="page" style="background-color: #f4f1ea;"></div>
+
+                    <!-- 封底 -->
+                    <div class="page hard" style="background-color: #f4f1ea;"></div>
+                    <div class="page hard cover-back flex items-center justify-center" style="background-color: #f4f1ea;">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-12 h-12 rounded-full border-2 border-dark/30 flex items-center justify-center">
+                                <div class="w-6 h-6 rounded-full bg-dark/20"></div>
+                            </div>
+                            <p class="font-mono text-dark/50 text-xs tracking-widest">END</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-paper/20 pt-8 pb-12 flex flex-col md:flex-row justify-end items-center font-mono text-xs text-paper/50 gap-4">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    当前坐标：北京-东四
+                </span>
+                <span class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-sm bg-paper/20 overflow-hidden relative transition-transform duration-300 hover:scale-110 cursor-pointer" onclick="openImageZoom(this.querySelector('img').src)">
+                        <img src="assets/600x600bf-60.jpg" alt="async" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5Z29uIHBvaW50cz0iMTAgOCAxNiAxMiAxMCAxNiAxMCA4Ij48L3BvbHlnb24+PC9zdmc+'">
+                    </span>
+                    正在听：《async》
+                </span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- 照片放大浮层 -->
+    <div id="photo-modal" class="fixed inset-0 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-700 bg-dark/95 backdrop-blur-md">
+        <button onclick="closePhotoModal()" class="absolute top-6 right-6 text-paper/50 hover:text-paper font-mono text-4xl z-10 transition-colors">&times;</button>
+        <img id="photo-modal-img" src="" class="max-w-[90vw] max-h-[90vh] object-contain transform scale-90 transition-transform duration-700 shadow-2xl" alt="Enlarged Photo">
+    </div>
+
+    <!-- 视频模态框 -->
+    <div id="video-modal" class="video-modal">
+        <div class="video-modal-content">
+            <button class="video-modal-close" onclick="closeVideoModal()">&times;</button>
+            <video id="video-modal-player" controls></video>
+        </div>
+    </div>
+
+    <!-- 导演剪辑版笔记 浮层 (Modal) -->
+    <div id="director-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500 bg-dark/90 backdrop-blur-md">
+        <div class="relative w-full max-w-3xl bg-paper text-dark p-8 md:p-12 m-4 transform scale-95 transition-transform duration-500 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-dark/50 hover:text-dark font-mono text-2xl">&times;</button>
+            <div class="font-mono text-xs text-dark/50 mb-4 tracking-widest uppercase">Director's Cut Notes</div>
+            <h2 id="modal-title" class="font-serif text-4xl font-bold mb-6">标题</h2>
+            <div id="modal-content" class="font-mono text-sm leading-relaxed space-y-4 text-dark/80">
+                <!-- 动态内容 -->
+            </div>
+            <div class="mt-8 pt-6 border-t border-dark/10">
+                <div class="aspect-[3/4] bg-dark/10 flex items-center justify-center font-mono text-dark/40">
+                    [ 视频播放器预留位置 ]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div id="image-zoom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" onclick="closeImageZoom()">
+        <button class="absolute top-6 right-6 text-white hover:text-accent transition-colors z-50" onclick="closeImageZoom()">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <img id="zoomed-image" src="" alt="Zoomed Image" class="max-w-[90vw] max-h-[90vh] object-contain scale-95 transition-transform duration-300">
+    </div>
+
+    <audio id="background-music" src="assets/andata.mp3" preload="metadata" loop></audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>

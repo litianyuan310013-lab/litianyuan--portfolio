@@ -1,0 +1,502 @@
+/* 胶片颗粒噪点动画 */
+@keyframes film-grain {
+    0%, 100% { transform: translate(0, 0) }
+    10% { transform: translate(-1%, -1%) }
+    20% { transform: translate(1%, 1%) }
+    30% { transform: translate(-2%, -2%) }
+    40% { transform: translate(2%, 2%) }
+    50% { transform: translate(-1%, 2%) }
+    60% { transform: translate(1%, -1%) }
+    70% { transform: translate(2%, -2%) }
+    80% { transform: translate(-2%, 1%) }
+    90% { transform: translate(2%, 1%) }
+}
+
+#film-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 150px 150px;
+    animation: film-grain 1.5s steps(10) infinite;
+}
+
+/* 隐藏滚动条 */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* 放映机光影闪烁效果 */
+@keyframes flicker {
+    0% { opacity: 1; }
+    3% { opacity: 0.8; }
+    6% { opacity: 1; }
+    7% { opacity: 0.9; }
+    8% { opacity: 1; }
+    9% { opacity: 0.85; }
+    10% { opacity: 1; }
+    89% { opacity: 1; }
+    90% { opacity: 0.9; }
+    100% { opacity: 1; }
+}
+
+.hover-flicker:hover {
+    animation: flicker 2s infinite;
+    text-shadow: 0 0 8px rgba(245, 245, 240, 0.4);
+}
+
+/* 电影进场特效 */
+.cinematic-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+.cinematic-fade-in.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 胶卷边缘齿孔样式 (放大版) */
+.film-sprockets {
+    padding: 32px 0; /* 为上下齿孔留出空间 */
+    background-color: #1A1A1A; /* 胶卷底色 */
+}
+
+.film-sprockets::before,
+.film-sprockets::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 32px;
+    /* 放大齿孔，减少数量 (间距变大) */
+    background-image: radial-gradient(circle, rgba(245,245,240,0.8) 12px, transparent 13px);
+    background-size: 64px 32px;
+    background-position: center;
+    z-index: 10;
+}
+.film-sprockets::before {
+    top: 0;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+.film-sprockets::after {
+    bottom: 0;
+    border-top: 2px solid rgba(255,255,255,0.1);
+}
+
+/* 垂直胶卷边缘齿孔样式 (照片墙使用) */
+.film-sprockets-vertical {
+    padding: 0 24px; /* 左右齿孔留出空间 */
+    background-color: #1A1A1A;
+    position: relative;
+}
+.film-sprockets-vertical::before,
+.film-sprockets-vertical::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    background-image: radial-gradient(circle, rgba(245,245,240,0.8) 8px, transparent 9px);
+    background-size: 24px 48px;
+    background-position: center;
+    z-index: 10;
+}
+.film-sprockets-vertical::before {
+    left: 0;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+.film-sprockets-vertical::after {
+    right: 0;
+    border-left: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 胶片滑动时的规则光影动效 */
+@keyframes film-light-leak {
+    0% { background-position: -200% 0; opacity: 0; }
+    50% { opacity: 0.15; }
+    100% { background-position: 200% 0; opacity: 0; }
+}
+
+.film-strip-horizontal {
+    scroll-behavior: smooth;
+    padding-bottom: 2rem;
+    position: relative;
+}
+
+/* 添加一个光影伪层，在滚动时触发动画 */
+.film-strip-horizontal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 230, 200, 0.4), transparent);
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    z-index: 20;
+    opacity: 0;
+}
+.film-strip-horizontal.is-scrolling::after {
+    animation: film-light-leak 1s linear infinite;
+}
+
+/* 胶卷拉开动画 */
+.film-roll-container {
+    position: relative;
+    overflow: visible;
+}
+
+.kodak-canister {
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 120%;
+    background: linear-gradient(90deg, #d39c3b 0%, #ffd966 20%, #e6a817 50%, #b37700 80%, #d39c3b 100%);
+    border-radius: 8px 0 0 8px;
+    z-index: 30;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.5), inset -5px 0 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    color: #1a1a1a;
+    font-weight: 900;
+    font-family: Arial, sans-serif;
+    letter-spacing: 2px;
+    border: 2px solid #333;
+    border-right: none;
+}
+.kodak-canister::before {
+    content: 'PORTRA 400';
+    background: #c00;
+    color: white;
+    padding: 10px 4px;
+    border-radius: 2px;
+    font-size: 14px;
+}
+
+.film-strip-wrapper {
+    width: 0;
+    overflow: hidden;
+    transition: width 2.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.film-roll-container.is-opened .film-strip-wrapper {
+    width: 100%;
+}
+.film-strip-horizontal {
+    scroll-behavior: smooth;
+    padding-bottom: 2rem;
+    position: relative;
+}
+
+/* 横向胶卷帧 */
+.film-frame-h {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.film-frame-h:hover {
+    transform: translateY(-4px);
+}
+
+/* 照片墙轻微浮动动效 */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+/* 翻书效果样式 */
+.perspective-1000 {
+    perspective: 1000px;
+}
+.page {
+    background-color: #f4f1ea;
+    position: relative;
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.page.hard {
+    background-color: #f4f1ea;
+}
+
+.page:not(.hard):before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5%;
+    bottom: 5%;
+    width: 3px;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 8px,
+        rgba(139, 69, 19, 0.15) 8px,
+        rgba(139, 69, 19, 0.15) 10px,
+        transparent 10px,
+        transparent 18px,
+        rgba(139, 69, 19, 0.2) 18px,
+        rgba(139, 69, 19, 0.2) 20px
+    );
+    box-shadow: 
+        1px 0 2px rgba(139, 69, 19, 0.1),
+        -1px 0 2px rgba(139, 69, 19, 0.1);
+}
+
+.cover-front {
+    border-radius: 0 4px 4px 0;
+}
+.cover-back {
+    border-radius: 4px 0 0 4px;
+}
+.page img {
+    pointer-events: none;
+}
+
+/* 简历数字卡片 */
+.stat-card {
+    border-left: 1px solid rgba(245,245,240,0.2);
+    padding-left: 1rem;
+    transition: all 0.3s ease;
+}
+.stat-card:hover {
+    border-color: rgba(245,245,240,0.8);
+    transform: translateX(4px);
+}
+
+/* 艺术摄影书不对称布局 */
+.page-asymmetric {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    gap: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    will-change: transform;
+}
+
+.photo-layout-1 {
+    grid-column: 1 / 9;
+    grid-row: 1 / 8;
+}
+
+.photo-layout-2 {
+    grid-column: 9 / 13;
+    grid-row: 1 / 6;
+}
+
+.photo-layout-3 {
+    grid-column: 3 / 10;
+    grid-row: 2 / 10;
+}
+
+.photo-layout-4 {
+    grid-column: 1 / 7;
+    grid-row: 3 / 13;
+}
+
+.photo-layout-5 {
+    grid-column: 7 / 13;
+    grid-row: 6 / 11;
+}
+
+.photo-layout-6 {
+    grid-column: 2 / 11;
+    grid-row: 1 / 9;
+}
+
+.photo-layout-7 {
+    grid-column: 1 / 6;
+    grid-row: 1 / 7;
+}
+
+.photo-layout-8 {
+    grid-column: 6 / 13;
+    grid-row: 3 / 12;
+}
+
+.photo-layout-9 {
+    grid-column: 1 / 8;
+    grid-row: 4 / 13;
+}
+
+.photo-layout-10 {
+    grid-column: 8 / 13;
+    grid-row: 1 / 8;
+}
+
+.photo-layout-11 {
+    grid-column: 3 / 12;
+    grid-row: 2 / 11;
+}
+
+.photo-layout-12 {
+    grid-column: 1 / 7;
+    grid-row: 1 / 9;
+}
+
+.photo-layout-13 {
+    grid-column: 7 / 13;
+    grid-row: 4 / 13;
+}
+
+.photo-layout-14 {
+    grid-column: 2 / 10;
+    grid-row: 1 / 10;
+}
+
+.photo-layout-15 {
+    grid-column: 1 / 6;
+    grid-row: 2 / 13;
+}
+
+.photo-layout-16 {
+    grid-column: 6 / 13;
+    grid-row: 1 / 9;
+}
+
+.photo-layout-17 {
+    grid-column: 1 / 9;
+    grid-row: 3 / 12;
+}
+
+.photo-layout-18 {
+    grid-column: 9 / 13;
+    grid-row: 1 / 7;
+}
+
+.photo-layout-19 {
+    grid-column: 3 / 11;
+    grid-row: 1 / 11;
+}
+
+.photo-layout-20 {
+    grid-column: 1 / 7;
+    grid-row: 1 / 8;
+}
+
+.photo-layout-21 {
+    grid-column: 7 / 13;
+    grid-row: 5 / 13;
+}
+
+.photo-layout-22 {
+    grid-column: 2 / 12;
+    grid-row: 2 / 10;
+}
+
+.photo-layout-23 {
+    grid-column: 1 / 8;
+    grid-row: 1 / 9;
+}
+
+.photo-layout-24 {
+    grid-column: 8 / 13;
+    grid-row: 4 / 13;
+}
+
+.photo-layout-25 {
+    grid-column: 1 / 10;
+    grid-row: 2 / 12;
+}
+
+.photo-layout-26 {
+    grid-column: 1 / 6;
+    grid-row: 1 / 10;
+}
+
+.photo-layout-27 {
+    grid-column: 6 / 13;
+    grid-row: 2 / 11;
+}
+
+.photo-layout-28 {
+    grid-column: 2 / 11;
+    grid-row: 1 / 13;
+}
+
+.photo-layout-29 {
+    grid-column: 1 / 8;
+    grid-row: 2 / 11;
+}
+
+.page-asymmetric img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 视频模态框 */
+.video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    backdrop-filter: blur(20px);
+    background: rgba(26, 26, 26, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.video-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.video-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    animation: modalZoomIn 0.4s ease;
+}
+
+@keyframes modalZoomIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.video-modal video {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.video-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: rgba(245, 245, 240, 0.1);
+    border: 1px solid rgba(245, 245, 240, 0.3);
+    color: rgba(245, 245, 240, 0.9);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.video-modal-close:hover {
+    background: rgba(245, 245, 240, 0.2);
+    border-color: rgba(245, 245, 240, 0.5);
+    transform: rotate(90deg);
+}
