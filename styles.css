@@ -60,8 +60,22 @@
 
 /* 胶卷边缘齿孔样式 (放大版) */
 .film-sprockets {
-    padding: 32px 0; /* 为上下齿孔留出空间 */
     background-color: #1A1A1A; /* 胶卷底色 */
+    position: relative;
+}
+
+.film-sprockets .preview-img,
+.film-sprockets .real-video {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 24px;
+    bottom: 24px;
+    width: calc(100% - 16px);
+    height: calc(100% - 48px);
+    object-fit: contain !important;
+    object-position: center;
+    background-color: #000;
 }
 
 .film-sprockets::before,
@@ -70,20 +84,23 @@
     position: absolute;
     left: 0;
     right: 0;
-    height: 32px;
+    height: 24px;
     /* 放大齿孔，减少数量 (间距变大) */
     background-image: radial-gradient(circle, rgba(245,245,240,0.8) 12px, transparent 13px);
-    background-size: 64px 32px;
+    background-size: 64px 24px;
     background-position: center;
     z-index: 10;
+    pointer-events: none;
 }
 .film-sprockets::before {
     top: 0;
     border-bottom: 2px solid rgba(255,255,255,0.1);
+    background-color: #1A1A1A;
 }
 .film-sprockets::after {
     bottom: 0;
     border-top: 2px solid rgba(255,255,255,0.1);
+    background-color: #1A1A1A;
 }
 
 /* 垂直胶卷边缘齿孔样式 (照片墙使用) */
