@@ -138,42 +138,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 摄影书翻页初始化
 window.addEventListener('load', () => {
+    const photobookSources = Array.from({ length: 29 }, (_, index) =>
+        `assets/photobook/photo-${String(index + 1).padStart(2, '0')}.jpg`
+    );
+
+    const photoLayouts = [
+        { maxWidth: 72, maxHeight: 74, top: 10, left: 10 },
+        { maxWidth: 64, maxHeight: 78, top: 8, left: 22 },
+        { maxWidth: 76, maxHeight: 66, top: 16, left: 8 },
+        { maxWidth: 68, maxHeight: 80, top: 9, left: 14 },
+        { maxWidth: 60, maxHeight: 72, top: 12, left: 28 },
+        { maxWidth: 80, maxHeight: 64, top: 18, left: 6 },
+        { maxWidth: 70, maxHeight: 70, top: 14, left: 16 },
+        { maxWidth: 62, maxHeight: 82, top: 7, left: 24 }
+    ];
+
+    // 给所有画册照片分配稳定的安全排版：保留原比例、不裁剪、不旋转
+    const photos = document.querySelectorAll('.page-asymmetric img');
+    photos.forEach((img, index) => {
+        const source = photobookSources[index];
+
+        if (source) {
+            img.src = source;
+            img.alt = `Photo ${index + 1}`;
+        }
+
+        const layout = photoLayouts[index % photoLayouts.length];
+        img.style.maxWidth = `${layout.maxWidth}%`;
+        img.style.maxHeight = `${layout.maxHeight}%`;
+        img.style.width = 'auto';
+        img.style.height = 'auto';
+        img.style.top = `${layout.top}%`;
+        img.style.left = `${layout.left}%`;
+        img.style.transform = 'translateZ(0)';
+    });
+
     const bookElement = document.getElementById('flipbook');
     if (bookElement && window.St && window.St.PageFlip) {
         const pageFlip = new St.PageFlip(bookElement, {
-            width: 400,
-            height: 550,
-            size: "stretch",
-            minWidth: 150,
-            maxWidth: 500,
-            minHeight: 200,
-            maxHeight: 700,
-            maxShadowOpacity: 0.5,
+            width: 420,
+            height: 560,
+            size: "fixed",
+            minWidth: 280,
+            maxWidth: 520,
+            minHeight: 420,
+            maxHeight: 720,
+            maxShadowOpacity: 0.2,
             showCover: true,
-            mobileScrollSupport: true,
-            usePortrait: false, // 强制双页显示，防止因响应式单双页切换导致的重叠闪烁BUG
+            mobileScrollSupport: false,
+            usePortrait: false,
             startPage: 0,
-            drawShadow: true,
-            flippingTime: 800,
+            drawShadow: false,
+            flippingTime: 600,
             useMouseEvents: true,
-            swipeDistance: 30,
+            swipeDistance: 20,
             clickEventForward: true
         });
-        
+
         const pages = document.querySelectorAll('.page');
         pageFlip.loadFromHTML(pages);
 
-        const bookWrapper = document.getElementById('book-wrapper');
-        let hasOpened = false;
-        
-        if (bookWrapper) {
-            bookWrapper.addEventListener('mouseenter', () => {
-                if (!hasOpened && pageFlip.getCurrentPageIndex() === 0) {
-                    pageFlip.flipNext();
-                    hasOpened = true;
-                }
+        // 翻页前后统一清理内联层级，避免局部页残留 z-index 导致重叠闪烁
+        const syncPageLayering = () => {
+            bookElement.querySelectorAll('.page').forEach((page) => {
+                page.style.zIndex = '';
+                page.style.visibility = '';
             });
-        }
+        };
+
+        pageFlip.on('flip', syncPageLayering);
+        pageFlip.on('changeState', syncPageLayering);
+        syncPageLayering();
     }
 });
 

@@ -213,11 +213,19 @@
 .perspective-1000 {
     perspective: 1000px;
 }
+
+.book-wrapper {
+    overflow: hidden;
+    align-items: flex-start;
+}
+
 .page {
     background-color: #f4f1ea;
     position: relative;
     overflow: hidden;
     backface-visibility: hidden;
+    transform-style: preserve-3d;
+    isolation: isolate;
 }
 
 .page.hard {
@@ -270,165 +278,48 @@
 
 /* 艺术摄影书不对称布局 */
 .page-asymmetric {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr);
-    gap: 0;
-    padding: 0;
-    height: 100%;
+    position: relative;
     width: 100%;
+    height: 100%;
+    overflow: hidden;
     will-change: transform;
 }
 
-.photo-layout-1 {
-    grid-column: 1 / 9;
-    grid-row: 1 / 8;
-}
-
-.photo-layout-2 {
-    grid-column: 9 / 13;
-    grid-row: 1 / 6;
-}
-
-.photo-layout-3 {
-    grid-column: 3 / 10;
-    grid-row: 2 / 10;
-}
-
-.photo-layout-4 {
-    grid-column: 1 / 7;
-    grid-row: 3 / 13;
-}
-
-.photo-layout-5 {
-    grid-column: 7 / 13;
-    grid-row: 6 / 11;
-}
-
-.photo-layout-6 {
-    grid-column: 2 / 11;
-    grid-row: 1 / 9;
-}
-
-.photo-layout-7 {
-    grid-column: 1 / 6;
-    grid-row: 1 / 7;
-}
-
-.photo-layout-8 {
-    grid-column: 6 / 13;
-    grid-row: 3 / 12;
-}
-
-.photo-layout-9 {
-    grid-column: 1 / 8;
-    grid-row: 4 / 13;
-}
-
-.photo-layout-10 {
-    grid-column: 8 / 13;
-    grid-row: 1 / 8;
-}
-
-.photo-layout-11 {
-    grid-column: 3 / 12;
-    grid-row: 2 / 11;
-}
-
-.photo-layout-12 {
-    grid-column: 1 / 7;
-    grid-row: 1 / 9;
-}
-
-.photo-layout-13 {
-    grid-column: 7 / 13;
-    grid-row: 4 / 13;
-}
-
-.photo-layout-14 {
-    grid-column: 2 / 10;
-    grid-row: 1 / 10;
-}
-
-.photo-layout-15 {
-    grid-column: 1 / 6;
-    grid-row: 2 / 13;
-}
-
-.photo-layout-16 {
-    grid-column: 6 / 13;
-    grid-row: 1 / 9;
-}
-
-.photo-layout-17 {
-    grid-column: 1 / 9;
-    grid-row: 3 / 12;
-}
-
-.photo-layout-18 {
-    grid-column: 9 / 13;
-    grid-row: 1 / 7;
-}
-
-.photo-layout-19 {
-    grid-column: 3 / 11;
-    grid-row: 1 / 11;
-}
-
-.photo-layout-20 {
-    grid-column: 1 / 7;
-    grid-row: 1 / 8;
-}
-
-.photo-layout-21 {
-    grid-column: 7 / 13;
-    grid-row: 5 / 13;
-}
-
-.photo-layout-22 {
-    grid-column: 2 / 12;
-    grid-row: 2 / 10;
-}
-
-.photo-layout-23 {
-    grid-column: 1 / 8;
-    grid-row: 1 / 9;
-}
-
-.photo-layout-24 {
-    grid-column: 8 / 13;
-    grid-row: 4 / 13;
-}
-
-.photo-layout-25 {
-    grid-column: 1 / 10;
-    grid-row: 2 / 12;
-}
-
-.photo-layout-26 {
-    grid-column: 1 / 6;
-    grid-row: 1 / 10;
-}
-
-.photo-layout-27 {
-    grid-column: 6 / 13;
-    grid-row: 2 / 11;
-}
-
-.photo-layout-28 {
-    grid-column: 2 / 11;
-    grid-row: 1 / 13;
-}
-
-.photo-layout-29 {
-    grid-column: 1 / 8;
-    grid-row: 2 / 11;
-}
-
 .page-asymmetric img {
+    position: absolute;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    box-shadow: none;
+    transform-origin: center;
+    background-color: transparent;
+    backface-visibility: hidden;
+    image-rendering: auto;
+    transition: opacity 0.25s ease;
+    box-sizing: border-box;
+}
+
+#flipbook {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 840px;
+    overflow: hidden !important;
+}
+
+#flipbook .page,
+#flipbook .page * {
+    backface-visibility: hidden;
+}
+
+#flipbook .stf__parent,
+#flipbook .stf__wrapper,
+#flipbook .stf__block,
+#flipbook .stf__item {
+    overflow: hidden !important;
+}
+
+#flipbook .stf__block {
+    transform: translateZ(0);
 }
 
 /* 视频模态框 */
