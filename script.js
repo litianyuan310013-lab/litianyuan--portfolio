@@ -438,7 +438,7 @@ if (photobookCover && backgroundMusic) {
     });
 }
 
-const sakamotoAudio = new Audio('assets/sakamoto.mp3');
+const sakamotoAudio = new Audio('https://forportfolio-1433253724.cos.ap-beijing.myqcloud.com/sakamoto.mp3');
 sakamotoAudio.preload = 'metadata';
 sakamotoAudio.volume = 0.1; // 调小音量
 sakamotoAudio.loop = true;
