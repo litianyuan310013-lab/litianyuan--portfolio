@@ -322,6 +322,25 @@
     transform: translateZ(0);
 }
 
+@media (max-width: 768px) {
+    .book-wrapper {
+        width: 100%;
+        padding: 0 0.75rem;
+        justify-content: center;
+    }
+
+    #flipbook {
+        width: min(92vw, 360px);
+        max-width: min(92vw, 360px);
+        margin: 0 auto;
+    }
+
+    #flipbook .stf__parent,
+    #flipbook .stf__wrapper {
+        margin: 0 auto;
+    }
+}
+
 /* 视频模态框 */
 .video-modal {
     position: fixed;

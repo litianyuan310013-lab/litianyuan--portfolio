@@ -175,23 +175,24 @@ window.addEventListener('load', () => {
 
     const bookElement = document.getElementById('flipbook');
     if (bookElement && window.St && window.St.PageFlip) {
+        const isMobileBook = window.matchMedia('(max-width: 768px)').matches;
         const pageFlip = new St.PageFlip(bookElement, {
-            width: 420,
-            height: 560,
-            size: "fixed",
-            minWidth: 280,
-            maxWidth: 520,
-            minHeight: 420,
-            maxHeight: 720,
+            width: isMobileBook ? 300 : 420,
+            height: isMobileBook ? 420 : 560,
+            size: isMobileBook ? "stretch" : "fixed",
+            minWidth: isMobileBook ? 240 : 280,
+            maxWidth: isMobileBook ? 360 : 520,
+            minHeight: isMobileBook ? 320 : 420,
+            maxHeight: isMobileBook ? 520 : 720,
             maxShadowOpacity: 0.2,
             showCover: true,
-            mobileScrollSupport: false,
-            usePortrait: false,
+            mobileScrollSupport: true,
+            usePortrait: isMobileBook,
             startPage: 0,
             drawShadow: false,
             flippingTime: 600,
             useMouseEvents: true,
-            swipeDistance: 20,
+            swipeDistance: isMobileBook ? 10 : 20,
             clickEventForward: true
         });
 
